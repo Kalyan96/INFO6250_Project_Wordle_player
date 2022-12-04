@@ -24,6 +24,8 @@ import javax.swing.border.Border;
 
 public class WordleGame implements ActionListener {
 
+
+	//----------------- UI windows , elements
 	class WordPanel extends JPanel {
 
 		JLabel[] wordColumns = new JLabel[5];
@@ -75,11 +77,17 @@ public class WordleGame implements ActionListener {
 
 	}
 
+	//------------------------------
+
+
+
+	//----------------- code execution
+
 	private JFrame gameFrame;
 	private WordPanel[] wordPanelArray = new WordPanel[6];
 	private UserPanel userPanel;
 	private String wordleString;
-	private int count = 0;
+	private int chance_number = 0; //
 
 	public WordleGame() {
 		gameFrame = new JFrame("Wordle Game");
@@ -106,6 +114,26 @@ public class WordleGame implements ActionListener {
 		new WordleGame();
 	}
 
+	//------------------------------
+
+
+
+	//--- get a random word from the list during the start of the game
+	public String getWordleString() {
+		Path path = Paths.get("..\\\\wordle.project\\\\assets\\\\Words.txt");
+		List<String> wordList = new ArrayList<>();
+		try {
+			wordList = Files.readAllLines(path);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Random random = new Random();
+		int position = random.nextInt(wordList.size());
+		return wordList.get(position).trim().toUpperCase();
+	}
+
+	//--- action performed when the ok button is clicked
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String userWord = this.userPanel.getUserInput().getText();
@@ -114,29 +142,28 @@ public class WordleGame implements ActionListener {
 			if (isWordleWordEqualTo(userWord.trim().toUpperCase())) {
 				clearAllPanels();
 				JOptionPane.showMessageDialog(null, "You Win!!!", "Congrats", JOptionPane.INFORMATION_MESSAGE);
+				System.out.println("\nWon in "+(chance_number+1)+" chances !");
 				gameFrame.dispose();
 				return;
 			}
 		}
-		if (count > 5) {
+		if (chance_number > 5) {
 			JOptionPane.showMessageDialog(null, "You Lost.Better luck next time.", "Oops",
 					JOptionPane.INFORMATION_MESSAGE);
 			gameFrame.dispose();
 			return;
 		}
-		count++;
+		chance_number++;
 	}
 
-	private void clearAllPanels() {
-		for (int i = 0; i <= count; i++) {
-			wordPanelArray[i].clearWordPanel();
-		}
-	}
 
-	private boolean isWordleWordEqualTo(String userWord) {
+	//--- take the word input and change the color of the boxes according to the word input
+	private boolean isWordleWordEqualTo(String userWord)
+	{
 		List<String> wordleWordsList = Arrays.asList(wordleString.split(""));
 		String[] userWordsArray = userWord.split("");
 		List<Boolean> wordMatchesList = new ArrayList<>();
+		System.out.println("Chance "+(chance_number+1)+" = "+userWord);
 
 		for (int i = 0; i < 5; i++) {
 			if (wordleWordsList.contains(userWordsArray[i])) {
@@ -156,21 +183,15 @@ public class WordleGame implements ActionListener {
 	}
 
 	public WordPanel getActivePanel() {
-		return this.wordPanelArray[count];
+		return this.wordPanelArray[chance_number];
 	}
 
-	public String getWordleString() {
-		Path path = Paths.get("..\\\\wordle.project\\\\assets\\\\Words.txt");
-		List<String> wordList = new ArrayList<>();
-		try {
-			wordList = Files.readAllLines(path);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private void clearAllPanels() {
+		for (int i = 0; i <= chance_number; i++) {
+			wordPanelArray[i].clearWordPanel();
 		}
-		Random random = new Random();
-		int position = random.nextInt(wordList.size());
-		return wordList.get(position).trim().toUpperCase();
 	}
 
 }
+
+// link to make-it-work : https://stackoverflow.com/questions/59601077/intellij-errorjava-error-release-version-5-not-supported
