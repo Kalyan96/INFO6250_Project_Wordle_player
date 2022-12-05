@@ -238,7 +238,7 @@ public class WordleGame implements ActionListener {
 				gameFrame.getContentPane().removeAll();
 				userPanel.getUserInput().setText(userWord);
 				gameFrame.add(userPanel);
-			//	gameFrame.userPanel.getUserInput().setText(userWord);
+				//	gameFrame.userPanel.getUserInput().setText(userWord);
 //				this.gameFrame.
 				System.out.println(check_word(userWord));
 				TimeUnit.MILLISECONDS.sleep(2000);
@@ -262,9 +262,9 @@ public class WordleGame implements ActionListener {
 				this.userPanel.getUserInput().setText(userWord);
 				System.out.println(check_word(userWord));
 				userWord = "small";
-				this.userPanel.getUserInput().setText(userWord);
-				System.out.println(check_word(userWord));
-				TimeUnit.MILLISECONDS.sleep(1000);
+//				this.userPanel.getUserInput().setText(userWord);
+//				System.out.println(check_word(userWord));
+//				TimeUnit.MILLISECONDS.sleep(1000);
 			} catch (Exception ee) {
 				System.out.println("Exception in auto");
 			}
