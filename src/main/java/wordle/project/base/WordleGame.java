@@ -13,13 +13,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.Border;
 
 public class WordleGame implements ActionListener {
@@ -49,12 +43,13 @@ public class WordleGame implements ActionListener {
 	//----------------- UI windows , elements
 	class WordPanel extends JPanel {
 
-		JLabel[] wordColumns = new JLabel[5];
+		public JLabel[] wordColumns = new JLabel[5];
 
 		public WordPanel()// panel having a 5 letter word will be filled here
 		{
 			this.setLayout(new GridLayout(1, 5));
 			Border blackBorder = BorderFactory.createLineBorder(Color.LIGHT_GRAY);
+
 			for (int i = 0; i < 5; i++) {
 				wordColumns[i] = new JLabel();
 				wordColumns[i].setHorizontalAlignment(JLabel.CENTER);
@@ -63,6 +58,7 @@ public class WordleGame implements ActionListener {
 				this.add(wordColumns[i]);
 			}
 		}
+
 
 		public void clearWordPanel() {
 			for (int i = 0; i < 5; i++) {
@@ -80,13 +76,25 @@ public class WordleGame implements ActionListener {
 
 		private JTextField userInput;
 		private JButton okButton;
+		private JRadioButton btn_auto;
+		private JRadioButton btn_manual;
+		private ButtonGroup mode = new ButtonGroup();
+
 
 		public UserPanel() {
-			this.setLayout(new GridLayout(1, 2));
+			this.setLayout(new GridLayout(2, 2));
+			btn_auto = new JRadioButton();
+			this.add(btn_auto);
+			btn_manual = new JRadioButton();
+			this.add(btn_manual);
+			this.mode.add(btn_auto);
+			this.mode.add(btn_manual);
+
 			userInput = new JTextField();
 			this.add(userInput);
 			okButton = new JButton("OK");
 			this.add(okButton);
+
 		}
 
 		public JTextField getUserInput() {
@@ -97,6 +105,13 @@ public class WordleGame implements ActionListener {
 			return okButton;
 		}
 
+		public JRadioButton getBtnAuto() {
+			return btn_auto;
+		}
+
+		public JRadioButton getBtnManual() {
+			return btn_manual;
+		}
 	}
 
 	//------------------------------
@@ -114,19 +129,23 @@ public class WordleGame implements ActionListener {
 	public WordleGame() {
 		String color_string = "";
 		gameFrame = new JFrame("Wordle Game");
-		gameFrame.setSize(300, 300);
+		gameFrame.setSize(500, 500);
 		gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		gameFrame.setLayout(new GridLayout(7, 1));
+		gameFrame.setLayout(new GridLayout(8, 1));
 		gameFrame.setVisible(true);
 		gameFrame.setLocationRelativeTo(null);
+
+		userPanel = new UserPanel();
+		userPanel.getOkButton().addActionListener(this);
+		userPanel.getBtnAuto().addActionListener(this);
+		userPanel.getBtnManual().addActionListener(this);
+		gameFrame.add(userPanel);
 
 		for (int i = 0; i < 6; i++) {
 			wordPanelArray[i] = new WordPanel();
 			gameFrame.add(wordPanelArray[i]);
 		}
-		userPanel = new UserPanel();
-		userPanel.getOkButton().addActionListener(this);
-		gameFrame.add(userPanel);
+
 		gameFrame.revalidate();
 
 		wordleString = getWordleString();
@@ -136,24 +155,7 @@ public class WordleGame implements ActionListener {
 	public static void main(String[] args) {
 		WordleGame w = new WordleGame();
 		// testing the check word function
-		try {
-			System.out.println(w.check_word("abcde"));
-			TimeUnit.MILLISECONDS.sleep(1000);
-			System.out.println(w.check_word("ghost"));
-			TimeUnit.MILLISECONDS.sleep(1000);
-			System.out.println(w.check_word("guest"));
-			TimeUnit.MILLISECONDS.sleep(1000);
-			System.out.println(w.check_word("world"));
-			TimeUnit.MILLISECONDS.sleep(1000);
-			System.out.println(w.check_word("small"));
-			TimeUnit.MILLISECONDS.sleep(1000);
-			System.out.println(w.check_word("malls"));
-//			TimeUnit.MILLISECONDS.sleep(1000);
-//			System.out.println(w.check_word("calls"));
-//			TimeUnit.MILLISECONDS.sleep(1000);
-//			System.out.println(w.check_word("stall"));
-		} catch (Exception e) {
-		}
+
 
 	}
 
@@ -204,27 +206,71 @@ public class WordleGame implements ActionListener {
 	//--- action performed when the ok button is clicked
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		String userWord = this.userPanel.getUserInput().getText();
+		if (e.getSource().equals(userPanel.okButton)) {
+			String userWord = this.userPanel.getUserInput().getText();
 
-		if (userWord.length() > 4 && wordList.contains(userWord)) {
-			if (isWordleWordEqualTo(userWord.trim().toUpperCase())) {
-				clearAllPanels();
-				JOptionPane.showMessageDialog(null, "You Win!!!", "Congrats", JOptionPane.INFORMATION_MESSAGE);
-				System.out.println("\nWon in " + (chance_number + 1) + " chances !");
+			if (userWord.length() > 4 && wordList.contains(userWord)) {
+				if (isWordleWordEqualTo(userWord.trim().toUpperCase())) {
+					clearAllPanels();
+					JOptionPane.showMessageDialog(null, "You Win!!!", "Congrats", JOptionPane.INFORMATION_MESSAGE);
+					System.out.println("\nWon in " + (chance_number + 1) + " chances !");
+					gameFrame.dispose();
+					return;
+				}
+				chance_number++;
+				this.color_string = "";
+			} else {
+				System.out.println("!! Incorrect length of the word, must be 5 or incorrect word entered");
+			}
+
+			if (chance_number > 5) {
+				JOptionPane.showMessageDialog(null, "You Lost.Better luck next time.", "Oops",
+						JOptionPane.INFORMATION_MESSAGE);
 				gameFrame.dispose();
 				return;
 			}
-			chance_number++;
-			this.color_string = "";
-		} else {
-			System.out.println("!! Incorrect length of the word, must be 5 or incorrect word entered");
-		}
+		} else if (e.getSource().equals(userPanel.btn_auto)) {
+			System.out.println("btn_auto pressed");
+			try {
+				String userWord;
+				userWord = "abcde";
+				//wordPanelArray.
+				gameFrame.getContentPane().removeAll();
+				userPanel.getUserInput().setText(userWord);
+				gameFrame.add(userPanel);
+			//	gameFrame.userPanel.getUserInput().setText(userWord);
+//				this.gameFrame.
+				System.out.println(check_word(userWord));
+				TimeUnit.MILLISECONDS.sleep(2000);
+				userWord = "mails";
+				this.userPanel.getUserInput().setText(userWord);
+				System.out.println(check_word(userWord));
+				TimeUnit.MILLISECONDS.sleep(2000);
+				userWord = "ghost";
+				this.userPanel.getUserInput().setText(userWord);
+				System.out.println(check_word(userWord));
+				TimeUnit.MILLISECONDS.sleep(1000);
+				userWord = "guest";
+				this.userPanel.getUserInput().setText(userWord);
+				System.out.println(check_word(userWord));
+				TimeUnit.MILLISECONDS.sleep(1000);
+				userWord = "world";
+				this.userPanel.getUserInput().setText(userWord);
+				System.out.println(check_word(userWord));
+				TimeUnit.MILLISECONDS.sleep(1000);
+				userWord = "small";
+				this.userPanel.getUserInput().setText(userWord);
+				System.out.println(check_word(userWord));
+				userWord = "small";
+				this.userPanel.getUserInput().setText(userWord);
+				System.out.println(check_word(userWord));
+				TimeUnit.MILLISECONDS.sleep(1000);
+			} catch (Exception ee) {
+				System.out.println("Exception in auto");
+			}
 
-		if (chance_number > 5) {
-			JOptionPane.showMessageDialog(null, "You Lost.Better luck next time.", "Oops",
-					JOptionPane.INFORMATION_MESSAGE);
-			gameFrame.dispose();
-			return;
+		} else if (e.getSource().equals(userPanel.btn_manual)) {
+			System.out.println("btn_manual pressed: MANUAL mode active");
 		}
 
 	}
