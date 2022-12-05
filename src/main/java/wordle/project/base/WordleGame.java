@@ -109,6 +109,7 @@ public class WordleGame implements ActionListener {
 	private UserPanel userPanel;
 	private String wordleString;
 	private int chance_number = 0; //
+	List<String> wordList;
 
 	public WordleGame() {
 		String color_string = "";
@@ -136,19 +137,21 @@ public class WordleGame implements ActionListener {
 		WordleGame w = new WordleGame();
 		// testing the check word function
 		try {
-			System.out.println(w.check_word("wordl"));
-			TimeUnit.MILLISECONDS.sleep(1000);
 			System.out.println(w.check_word("abcde"));
 			TimeUnit.MILLISECONDS.sleep(1000);
-			System.out.println(w.check_word("hirdo"));
+			System.out.println(w.check_word("ghost"));
 			TimeUnit.MILLISECONDS.sleep(1000);
-			System.out.println(w.check_word("burde"));
+			System.out.println(w.check_word("guest"));
 			TimeUnit.MILLISECONDS.sleep(1000);
-			System.out.println(w.check_word("karne"));
+			System.out.println(w.check_word("world"));
 			TimeUnit.MILLISECONDS.sleep(1000);
-			System.out.println(w.check_word("murdl"));
+			System.out.println(w.check_word("small"));
 			TimeUnit.MILLISECONDS.sleep(1000);
-			System.out.println(w.check_word("murdl"));
+			System.out.println(w.check_word("malls"));
+//			TimeUnit.MILLISECONDS.sleep(1000);
+//			System.out.println(w.check_word("calls"));
+//			TimeUnit.MILLISECONDS.sleep(1000);
+//			System.out.println(w.check_word("stall"));
 		} catch (Exception e) {
 		}
 
@@ -160,7 +163,7 @@ public class WordleGame implements ActionListener {
 	//--- get a random word from the list during the start of the game
 	public String getWordleString() {
 		Path path = Paths.get("..\\\\wordle.project\\\\assets\\\\Words.txt");
-		List<String> wordList = new ArrayList<>();
+		wordList = new ArrayList<>();
 		try {
 			wordList = Files.readAllLines(path);
 		} catch (IOException e) {
@@ -175,7 +178,7 @@ public class WordleGame implements ActionListener {
 
 	public String check_word(String userWord) {
 		this.color_string = "";
-		if (userWord.length() == 5) {
+		if (userWord.length() == 5 && wordList.contains(userWord)) {
 			if (isWordleWordEqualTo(userWord.trim().toUpperCase())) {
 				clearAllPanels();
 				JOptionPane.showMessageDialog(null, "You Win!!!", "Congrats", JOptionPane.INFORMATION_MESSAGE);
@@ -183,19 +186,19 @@ public class WordleGame implements ActionListener {
 				gameFrame.dispose();
 				System.exit(0);
 			}
+			chance_number++;
 		} else {
-			System.out.println("!! Incorrect length of the word, must be 5 ");
+			System.out.println("!! Incorrect length of the word, must be 5 or incorrect word entered");
 		}
 
 		if (chance_number > 5) {
-//			JOptionPane.showMessageDialog(null, "You Lost.Better luck next time.", "Oops",
-//					JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null, "You Lost.Better luck next time.", "Oops",
+					JOptionPane.INFORMATION_MESSAGE);
 			gameFrame.dispose();
 			System.exit(0);
 		}
-
-		chance_number++;
 		return this.color_string;
+
 	}
 
 	//--- action performed when the ok button is clicked
@@ -203,7 +206,7 @@ public class WordleGame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String userWord = this.userPanel.getUserInput().getText();
 
-		if (userWord.length() > 4) {
+		if (userWord.length() > 4 && wordList.contains(userWord)) {
 			if (isWordleWordEqualTo(userWord.trim().toUpperCase())) {
 				clearAllPanels();
 				JOptionPane.showMessageDialog(null, "You Win!!!", "Congrats", JOptionPane.INFORMATION_MESSAGE);
@@ -211,15 +214,19 @@ public class WordleGame implements ActionListener {
 				gameFrame.dispose();
 				return;
 			}
+			chance_number++;
+			this.color_string = "";
+		} else {
+			System.out.println("!! Incorrect length of the word, must be 5 or incorrect word entered");
 		}
+
 		if (chance_number > 5) {
-//			JOptionPane.showMessageDialog(null, "You Lost.Better luck next time.", "Oops",
-//					JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null, "You Lost.Better luck next time.", "Oops",
+					JOptionPane.INFORMATION_MESSAGE);
 			gameFrame.dispose();
 			return;
 		}
-		chance_number++;
-		this.color_string = "";
+
 	}
 
 
