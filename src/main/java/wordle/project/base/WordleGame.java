@@ -43,7 +43,7 @@ public class WordleGame implements ActionListener {
 	//----------------- UI windows , elements
 	class WordPanel extends JPanel {
 
-		public JLabel[] wordColumns = new JLabel[5];
+		JLabel[] wordColumns = new JLabel[5];
 
 		public WordPanel()// panel having a 5 letter word will be filled here
 		{
@@ -232,39 +232,24 @@ public class WordleGame implements ActionListener {
 		} else if (e.getSource().equals(userPanel.btn_auto)) {
 			System.out.println("btn_auto pressed");
 			try {
-				String userWord;
-				userWord = "abcde";
-				//wordPanelArray.
-				gameFrame.getContentPane().removeAll();
-				userPanel.getUserInput().setText(userWord);
-				gameFrame.add(userPanel);
-				//	gameFrame.userPanel.getUserInput().setText(userWord);
-//				this.gameFrame.
-				System.out.println(check_word(userWord));
-				TimeUnit.MILLISECONDS.sleep(2000);
-				userWord = "mails";
-				this.userPanel.getUserInput().setText(userWord);
-				System.out.println(check_word(userWord));
-				TimeUnit.MILLISECONDS.sleep(2000);
-				userWord = "ghost";
-				this.userPanel.getUserInput().setText(userWord);
-				System.out.println(check_word(userWord));
+				System.out.println(check_word("abcde"));
+				//check_word()
 				TimeUnit.MILLISECONDS.sleep(1000);
-				userWord = "guest";
-				this.userPanel.getUserInput().setText(userWord);
-				System.out.println(check_word(userWord));
+				System.out.println(check_word("ghost"));
 				TimeUnit.MILLISECONDS.sleep(1000);
-				userWord = "world";
-				this.userPanel.getUserInput().setText(userWord);
-				System.out.println(check_word(userWord));
+				System.out.println(check_word("guest"));
 				TimeUnit.MILLISECONDS.sleep(1000);
-				userWord = "small";
-				this.userPanel.getUserInput().setText(userWord);
-				System.out.println(check_word(userWord));
-				userWord = "small";
-//				this.userPanel.getUserInput().setText(userWord);
-//				System.out.println(check_word(userWord));
-//				TimeUnit.MILLISECONDS.sleep(1000);
+				System.out.println(check_word("world"));
+				TimeUnit.MILLISECONDS.sleep(1000);
+				System.out.println(check_word("small"));
+				TimeUnit.MILLISECONDS.sleep(1000);
+				System.out.println(check_word("malls"));
+				TimeUnit.MILLISECONDS.sleep(1000);
+				System.out.println(check_word("mails"));
+//			TimeUnit.MILLISECONDS.sleep(1000);
+//			System.out.println(w.check_word("calls"));
+//			TimeUnit.MILLISECONDS.sleep(1000);
+//			System.out.println(w.check_word("stall"));
 			} catch (Exception ee) {
 				System.out.println("Exception in auto");
 			}
