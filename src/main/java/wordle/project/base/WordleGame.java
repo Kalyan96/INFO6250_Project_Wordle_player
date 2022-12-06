@@ -1,5 +1,7 @@
 package wordle.project.base;
 
+import WordleSolver;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -86,9 +88,9 @@ public class WordleGame implements ActionListener {
 
 		public UserPanel() {
 			this.setLayout(new GridLayout(2, 2));
-			btn_auto = new JRadioButton();
+			btn_auto = new JRadioButton("Auto");
 			this.add(btn_auto);
-			btn_manual = new JRadioButton();
+			btn_manual = new JRadioButton("Manual");
 			this.add(btn_manual);
 			this.mode.add(btn_auto);
 			this.mode.add(btn_manual);
@@ -194,8 +196,8 @@ public class WordleGame implements ActionListener {
 		}
 		Random random = new Random();
 		int position = random.nextInt(wordList.size());
-//		return wordList.get(position).trim().toUpperCase();
-		return "SPEED";
+		return wordList.get(position).trim().toUpperCase();
+//		return "SPEED";
 	}
 
 	//--- check the word for the answer bot and then return the color result
@@ -309,22 +311,21 @@ public class WordleGame implements ActionListener {
 		{
 			checked_chars = checked_chars + userWordsArray[i];
 //			System.out.println("count of " + userWordsArray[i] + " is " + count_check(userWord, userWordsArray[i]) );
-				if (wordleWordsList.contains(userWordsArray[i]) && wordleWordsList.get(i).equals(userWordsArray[i])) {
-					getActivePanel().setPanelText(userWordsArray[i], i, Color.GREEN);
-					wordMatchesList.add(true);
-					this.color_string = this.color_string + "G";
-				} else if (wordleWordsList.contains(userWordsArray[i]) && count_check(wordleString, userWordsArray[i]) >= count_check(checked_chars, userWordsArray[i])) {
+			if (wordleWordsList.contains(userWordsArray[i]) && wordleWordsList.get(i).equals(userWordsArray[i])) {
+				getActivePanel().setPanelText(userWordsArray[i], i, Color.GREEN);
+				wordMatchesList.add(true);
+				this.color_string = this.color_string + "g";
+			} else if (wordleWordsList.contains(userWordsArray[i]) && count_check(wordleString, userWordsArray[i]) >= count_check(checked_chars, userWordsArray[i])) {
 
-					getActivePanel().setPanelText(userWordsArray[i], i, Color.YELLOW);
-					wordMatchesList.add(false);
-					this.color_string = this.color_string + "Y";
+				getActivePanel().setPanelText(userWordsArray[i], i, Color.YELLOW);
+				wordMatchesList.add(false);
+				this.color_string = this.color_string + "y";
 
-				}
-				else {
-					getActivePanel().setPanelText(userWordsArray[i], i, Color.GRAY);
-					wordMatchesList.add(false);
-					this.color_string = this.color_string + "-";
-				}
+			} else {
+				getActivePanel().setPanelText(userWordsArray[i], i, Color.GRAY);
+				wordMatchesList.add(false);
+				this.color_string = this.color_string + "b";
+			}
 		}
 		this.gameFrame.revalidate();
 		return !wordMatchesList.contains(false);
