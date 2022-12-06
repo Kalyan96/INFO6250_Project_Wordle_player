@@ -151,6 +151,10 @@ public class WordleGame implements ActionListener {
 	private String wordleString;
 	private int chance_number = 0; //
 
+	public WordleGame(boolean flag) {
+		flag = true;
+	}
+
 	public WordleGame() {
 		String color_string = "";
 		gameFrame = new JFrame("Wordle Game");
@@ -180,34 +184,38 @@ public class WordleGame implements ActionListener {
 	}
 
 	public static void main(String[] args) {
-		while (true) {
-			WordleGame w = new WordleGame();
-			w.setVariables();
-			w.setWordFrequencyList();
+//		while (true)
+		{
+//			WordleGame w = new WordleGame();
+//			w.setVariables();
+//			w.setWordFrequencyList();
+			new WordleGame(true).test("speed", "error");
 			boolean finished = false;
-			while (!finished && w.end == 0) {
+//			while (!finished && w.end == 0)
+//			{
 //			if (w.auto_mode == 1)
-				{
-					try {
-						TimeUnit.MILLISECONDS.sleep(1000);
-					} catch (Exception f) {
-					}
-
-					w.gen_test_word();
-
-
-					w.auto_mode_sequence();
-
-					if (w.end == 0)
-						try {
-							finished = w.findWord();// test_word will get updated
-						} catch (Exception g) {
-							System.out.println("!!!! Exception occured with word=" + w.test_word + " ");
-						}
-
-				}
-
-			}
+//				{
+//					try {
+//						TimeUnit.MILLISECONDS.sleep(1);
+//					} catch (Exception f) {
+//					}
+//
+//					w.gen_test_word();// generates the first word randomly and stores it in test_word for first check
+//
+//
+////					w.auto_mode_sequence();
+//					System.out.println("COLOR o/p = " + w.check_word(w.test_word));// check the test_word and store the resultant color in color_string
+//
+//					if (w.end == 0)
+//						try {
+//							finished = w.findWord();// the color_string and test_string will be checked, and the solution finder algo will try to find the best match word
+//						} catch (Exception g) {
+//							System.out.println("\n!!!! Exception occured in finding word=" + w.test_word + " \n");
+//						}
+//
+//				}
+//
+//			}
 		}
 
 //		while (true) {
@@ -245,14 +253,15 @@ public class WordleGame implements ActionListener {
 		}
 		Random random = new Random();
 		int position = random.nextInt(wordList.size());
-		return wordList.get(position).trim().toUpperCase();
-//		return "SPEED";
+//		return wordList.get(position).trim().toUpperCase();
+		return "SPEED";
 	}
 
 	//--- check the word for the answer bot and then return the color result
 	public String check_word(String userWord) {
 		this.color_string = "";
-		if (userWord.length() == 5 && wordList.contains(userWord)) {
+//		if (userWord.length() == 5 && wordList.contains(userWord)) {
+		if (userWord.length() == 5) {
 			if (isWordleWordEqualTo(userWord.trim().toUpperCase())) {
 //				JOptionPane.showMessageDialog(null, "You Win!!!", "Congrats", JOptionPane.INFORMATION_MESSAGE);
 				clearAllPanels();
@@ -316,9 +325,8 @@ public class WordleGame implements ActionListener {
 
 	public void auto_mode_sequence() {
 		try {
-			Random random = new Random();
-			System.out.println(this.check_word(test_word));
-			TimeUnit.MILLISECONDS.sleep(500);
+			System.out.println(this.check_word(test_word));// check the word and store the resultant color in color_string
+			TimeUnit.MILLISECONDS.sleep(1);
 //			System.out.println(w.check_word("ghost"));
 //			TimeUnit.MILLISECONDS.sleep(1000);
 //			System.out.println(w.check_word("guest"));
@@ -349,15 +357,26 @@ public class WordleGame implements ActionListener {
 		return count;
 	}
 
-	//--- take the word input and change the color of the boxes according to the word input
+	public int count_check(String s, char c) {
+		int count = 0;
+		String[] s_arr = s.split("");
+		for (int i = 0; i < s.length(); i++) {
+			if (s.charAt(i) == c) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	//--- take the word input and change the color of the boxes according to the word input and also update the color_string
 	private boolean isWordleWordEqualTo(String userWord) {
 		List<String> wordleWordsList = Arrays.asList(wordleString.split(""));
 		String[] userWordsArray = userWord.split("");
 		List<Boolean> wordMatchesList = new ArrayList<>();
-		System.out.println("Chance " + (chance_number + 1) + " = " + userWord);
+		System.out.print("Game_bot : Chance " + (chance_number + 1) + " = " + userWord);
 		String checked_chars = "";// letters checked until that instant
 
-		for (int i = 0; i < 5; i++) // checking for each letter in the word inputted and then updating the color of the panel text for each letter
+		for (int i = 0; i < wordleString.length(); i++) // checking for each letter in the word inputted and then updating the color of the panel text for each letter
 		{
 			checked_chars = checked_chars + userWordsArray[i];
 //			System.out.println("count of " + userWordsArray[i] + " is " + count_check(userWord, userWordsArray[i]) );
@@ -377,9 +396,71 @@ public class WordleGame implements ActionListener {
 				this.color_string = this.color_string + "b";
 			}
 		}
+		// validation of greens and yellows
+		userWordsArray = userWord.split("");
+		String[] wordleStringarray = wordleString.split("");
+		String[] colorstringarray = color_string.split("");
+		for (int i = 0; i < userWordsArray.length; i++) {
+			// userWord, wordleString, color_string
+			//char = e ---> ref = userWordsArray[i]
+			int green_count = 0;
+			int yellow_count = 0;
+			int[] yellow_index = new int[userWordsArray.length];
+
+			if (count_check(userWord, userWordsArray[i]) > count_check(wordleString, userWordsArray[i]))
+				for (int j = 0; j < userWordsArray.length; j++) {
+					if (userWordsArray[i] == userWordsArray[j] && colorstringarray[j] == "g") green_count++;
+					else if (userWordsArray[i] == userWordsArray[j] && colorstringarray[j] == "y") yellow_count++;
+				}
+
+			if (green_count == count_check(wordleString, userWordsArray[i]) && yellow_count > 0) {
+				for (int j = 0; j < userWordsArray.length; j++) {
+					if (userWordsArray[i] == userWordsArray[j] && colorstringarray[j] == "y") colorstringarray[j] = "b";
+				}
+			}
+
+			StringBuffer sb = new StringBuffer();
+			for (int jj = 0; jj < colorstringarray.length; jj++) {
+				sb.append(colorstringarray[i]);
+			}
+			this.color_string = sb.toString();
+
+		}
+		String testColor = test(wordleString,userWord);
 		this.gameFrame.revalidate();
+		System.out.println(" ----> Color= " + this.color_string);
 		return !wordMatchesList.contains(false);
 	}
+
+	public int correctGuess(String answer, String guess, char ch) {
+		int count = 0;
+		for (int i = 0; i < answer.length(); i++) {
+			if (answer.charAt(i) == ch && guess.charAt(i) == ch)
+				count++;
+		}
+		return count;
+	}
+
+	public String test(String answer, String guess)
+	{
+		String color = "";
+		for (int i = 0; i < guess.length(); i++) {
+				if (answer.charAt(i) == guess.charAt(i))
+					color += "g";
+				else if (count_check(answer, guess.charAt(i)) == 0)
+					color += "b";
+				else if ((count_check(answer, guess.charAt(i)) < count_check(guess, guess.charAt(i)))
+						&& count_check(guess, guess.charAt(i)) > correctGuess(answer, guess, guess.charAt(i)))
+					color += "b";
+				else
+					color += "y";
+		}
+		System.out.println(color);
+		System.out.println(color.length());
+		return color;
+	}
+
+
 	// MITAL's function
 //	private boolean isWordleWordEqualTo(String userWord) {
 //		List<String> wordleWordsList = Arrays.asList(wordleString.split(""));
@@ -659,7 +740,7 @@ public class WordleGame implements ActionListener {
 
 		finalWord = finalElement.getWord();
 		test_word = finalWord;
-		System.out.println("Recommendation: " + finalWord);
+		System.out.println("Solver_bot : Recommendation: " + finalWord);
 
 		return false;
 	}
