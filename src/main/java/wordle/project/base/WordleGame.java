@@ -100,9 +100,9 @@ public class WordleGame implements ActionListener {
 		private JRadioButton btn_manual;
 		private ButtonGroup mode = new ButtonGroup();
 
-
 		public UserPanel() {
-			this.setLayout(new GridLayout(2, 2));
+			this.setLayout(new GridLayout(3, 2));
+
 			btn_auto = new JRadioButton("Auto");
 			this.add(btn_auto);
 			btn_manual = new JRadioButton("Manual");
@@ -134,6 +134,36 @@ public class WordleGame implements ActionListener {
 		}
 	}
 
+
+	class VariationPanel extends JPanel {
+
+		//Mital
+		private JRadioButton btn_standard;
+		private JRadioButton btn_variation;
+		private ButtonGroup btngrpvariation = new ButtonGroup();
+
+
+		public VariationPanel() {
+			this.setLayout(new GridLayout(1, 2));
+
+			btn_standard = new JRadioButton("Standard(5 Letters)");
+			this.add(btn_standard);
+			btn_variation = new JRadioButton("Variation(6 Letters)");
+			this.add(btn_variation);
+			this.btngrpvariation.add(btn_standard);
+			this.btngrpvariation.add(btn_variation);
+
+		}
+
+		public JRadioButton getBtnStandard() {
+			return btn_standard;
+		}
+
+		public JRadioButton getBtnvariation() {
+			return btn_variation;
+		}
+	}
+
 	//------------------------------
 
 
@@ -142,6 +172,7 @@ public class WordleGame implements ActionListener {
 	private JFrame gameFrame;
 	private WordPanel[] wordPanelArray = new WordPanel[6];
 	private UserPanel userPanel;
+	private VariationPanel variationPanel;
 	private String wordleString;
 	private int chance_number = 0; //
 
@@ -154,6 +185,12 @@ public class WordleGame implements ActionListener {
 		gameFrame = new JFrame("Wordle Game");
 		gameFrame.setSize(500, 500);
 		gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+		variationPanel = new VariationPanel();
+		variationPanel.getBtnStandard().addActionListener(this);
+		variationPanel.getBtnvariation().addActionListener(this);
+		gameFrame.add(variationPanel);
+
 		gameFrame.setLayout(new GridLayout(8, 1));
 		gameFrame.setVisible(true);
 		gameFrame.setLocationRelativeTo(null);
@@ -163,12 +200,13 @@ public class WordleGame implements ActionListener {
 		userPanel.getBtnAuto().addActionListener(this);
 		userPanel.getBtnManual().addActionListener(this);
 		gameFrame.add(userPanel);
+		userPanel.setVisible(false);
 
 		for (int i = 0; i < 6; i++) {
 			wordPanelArray[i] = new WordPanel();
 			gameFrame.add(wordPanelArray[i]);
 		}
-
+		//wordPanelArray.setVisible(false);
 		gameFrame.revalidate();
 		gameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -185,29 +223,33 @@ public class WordleGame implements ActionListener {
 			w.setWordFrequencyList();
 //			new WordleGame(true).color_find("speed", "error");
 			boolean finished = false;
+			int trials = 0;
+
 			while (!finished && w.end == 0) {
-//			if (w.auto_mode == 1)
-//				{
-//					try {
-//						TimeUnit.MILLISECONDS.sleep(1);
-//					} catch (Exception f) {
-//					}
-//
-//					w.gen_test_word();// generates the first word randomly and stores it in test_word for first check
-//
-//
-////					w.auto_mode_sequence();
-//					System.out.println("COLOR o/p = " + w.check_word(w.test_word));// check the test_word and store the resultant color in color_string
-//
-//					if (w.end == 0)
-//						try {
-//							finished = w.findWord();// the color_string and test_string will be checked, and the solution finder algo will try to find the best match word
-//						} catch (Exception g) {
-//							System.out.println("\n!!!! Exception occured in finding word=" + w.test_word + " \n");
-//						}
-//
-//				}
-//
+//				System.out.println("if" + w.end);
+				if (w.auto_mode == 1) {
+					try {
+						TimeUnit.MILLISECONDS.sleep(1);
+					} catch (Exception f) {
+					}
+
+					w.gen_test_word();// generates the first word randomly and stores it in test_word for first check
+
+//					w.auto_mode_sequence();
+					System.out.println("COLOR o/p = " + w.check_word(w.test_word));// check the test_word and store the resultant color in color_string
+
+					if (w.end == 0) {
+						try {
+							finished = w.findWord();// the color_string and test_string will be checked, and the solution finder algo will try to find the best match word
+						} catch (Exception g) {
+							System.out.println("\n!!!! Exception occured in finding word=" + w.test_word + " \n");
+						}
+					}
+					else {
+						w = new WordleGame();
+					}
+				}
+
 			}
 		}
 
@@ -236,7 +278,7 @@ public class WordleGame implements ActionListener {
 
 	//--- get a random word from the list during the start of the game
 	public String getWordleString() {
-		Path path = Paths.get("..\\\\wordle.project\\\\assets\\\\Words.txt");
+		Path path = Paths.get(".//assets//Words.txt");
 		wordList = new ArrayList<>();
 		try {
 			wordList = Files.readAllLines(path);
@@ -246,8 +288,8 @@ public class WordleGame implements ActionListener {
 		}
 		Random random = new Random();
 		int position = random.nextInt(wordList.size());
-//		return wordList.get(position).trim().toUpperCase();
-		return "SPEED";
+		return wordList.get(position).trim().toUpperCase();
+//		return "SPEED";
 	}
 
 	//--- check the word for the answer bot and then return the color result
@@ -255,12 +297,13 @@ public class WordleGame implements ActionListener {
 		this.color_string = "";
 //		if (userWord.length() == 5 && wordList.contains(userWord)) {
 		if (userWord.length() == 5) {
+			System.out.println("Words Equal" + isWordleWordEqualTo(userWord.trim().toUpperCase()));
 			if (isWordleWordEqualTo(userWord.trim().toUpperCase())) {
-//				JOptionPane.showMessageDialog(null, "You Win!!!", "Congrats", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, "You Win in " + (chance_number + 1) + "chances!!!", "Congrats", JOptionPane.INFORMATION_MESSAGE);
 				clearAllPanels();
-				System.out.println("\n>>>>>> Won in " + (chance_number + 1) + " chances !\n");
+				//System.out.println("\n>>>>>> Won in " + (chance_number + 1) + " chances !\n");
 				gameFrame.dispose();
-				end = 1;
+//				end = 1;
 			}
 			chance_number++;
 		} else {
@@ -268,9 +311,10 @@ public class WordleGame implements ActionListener {
 		}
 
 		if (chance_number > 5) {
-//			JOptionPane.showMessageDialog(null, "You Lost.Better luck next time.", "Oops",
-//					JOptionPane.INFORMATION_MESSAGE);
-			System.out.println("\nXXXXXXX Lost in " + (chance_number + 1) + " chances !\n");
+			JOptionPane.showMessageDialog(null, "You Lost in " + (chance_number + 1) + " chances.Better luck next time.", "Oops",
+					JOptionPane.INFORMATION_MESSAGE);
+
+			//System.out.println("\nXXXXXXX Lost in " + (chance_number + 1) + " chances !\n");
 			gameFrame.dispose();
 			end = 1;
 		}
@@ -312,7 +356,15 @@ public class WordleGame implements ActionListener {
 		} else if (e.getSource().equals(userPanel.btn_manual)) {
 			System.out.println("btn_manual pressed: MANUAL mode active");
 			auto_mode = 0;
+		} else if (e.getSource().equals(variationPanel.btn_standard)) {
+			System.out.println("btn_standard pressed");
+			userPanel.setVisible(true);
+
+		} else if (e.getSource().equals(variationPanel.btn_variation)) {
+			System.out.println("btn_variation pressed: MANUAL mode active");
+			userPanel.setVisible(true);
 		}
+
 
 	}
 
@@ -436,7 +488,7 @@ public class WordleGame implements ActionListener {
 //		}
 //		this.gameFrame.revalidate();
 		System.out.println(" ----> Color= " + this.color_string);
-		if (this.color_string == "ggggg") return true;
+		if (this.color_string.equals("ggggg")) return true;
 		else return false;
 	}
 
@@ -662,7 +714,7 @@ public class WordleGame implements ActionListener {
 	}
 
 	public void extract_word_list() {
-		Path path = Paths.get("..\\\\wordle.project\\\\assets\\\\Words.txt");
+		Path path = Paths.get(".//assets//Words.txt");
 		wordList = new ArrayList<>();
 		try {
 			wordList = Files.readAllLines(path);
