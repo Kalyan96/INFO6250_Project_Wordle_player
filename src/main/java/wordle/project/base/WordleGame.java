@@ -19,13 +19,7 @@ import javax.swing.border.Border;
 
 //solver part
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 import java.util.Scanner;
-import java.util.ArrayList;
-import java.util.Random;
 
 
 public class WordleGame implements ActionListener {
@@ -151,9 +145,9 @@ public class WordleGame implements ActionListener {
 	private String wordleString;
 	private int chance_number = 0; //
 
-	public WordleGame(boolean flag) {
-		flag = true;
-	}
+//	public WordleGame(boolean flag) {
+//		flag = true;
+//	}
 
 	public WordleGame() {
 		String color_string = "";
@@ -186,13 +180,12 @@ public class WordleGame implements ActionListener {
 	public static void main(String[] args) {
 //		while (true)
 		{
-//			WordleGame w = new WordleGame();
-//			w.setVariables();
-//			w.setWordFrequencyList();
-			new WordleGame(true).test("speed", "error");
+			WordleGame w = new WordleGame();
+			w.setVariables();
+			w.setWordFrequencyList();
+//			new WordleGame(true).color_find("speed", "error");
 			boolean finished = false;
-//			while (!finished && w.end == 0)
-//			{
+			while (!finished && w.end == 0) {
 //			if (w.auto_mode == 1)
 //				{
 //					try {
@@ -215,7 +208,7 @@ public class WordleGame implements ActionListener {
 //
 //				}
 //
-//			}
+			}
 		}
 
 //		while (true) {
@@ -372,93 +365,164 @@ public class WordleGame implements ActionListener {
 	private boolean isWordleWordEqualTo(String userWord) {
 		List<String> wordleWordsList = Arrays.asList(wordleString.split(""));
 		String[] userWordsArray = userWord.split("");
-		List<Boolean> wordMatchesList = new ArrayList<>();
+//		List<Boolean> wordMatchesList = new ArrayList<>();
+//		String checked_chars = "";// letters checked until that instant
 		System.out.print("Game_bot : Chance " + (chance_number + 1) + " = " + userWord);
-		String checked_chars = "";// letters checked until that instant
-
-		for (int i = 0; i < wordleString.length(); i++) // checking for each letter in the word inputted and then updating the color of the panel text for each letter
+		this.color_string = color_find(wordleString, userWord);
+		String[] color_string_array = this.color_string.split("");
+//		System.out.println(" debug : " + this.color_string.length() + ":" + color_string_array[0]);
+		for (int i = 0; i < this.color_string.length(); i++) // checking for each letter in the word inputted and then updating the color of the panel text for each letter
 		{
-			checked_chars = checked_chars + userWordsArray[i];
-//			System.out.println("count of " + userWordsArray[i] + " is " + count_check(userWord, userWordsArray[i]) );
-			if (wordleWordsList.contains(userWordsArray[i]) && wordleWordsList.get(i).equals(userWordsArray[i])) {
-				getActivePanel().setPanelText(userWordsArray[i], i, Color.GREEN);
-				wordMatchesList.add(true);
-				this.color_string = this.color_string + "g";
-			} else if (wordleWordsList.contains(userWordsArray[i]) && count_check(wordleString, userWordsArray[i]) >= count_check(checked_chars, userWordsArray[i])) {
-
-				getActivePanel().setPanelText(userWordsArray[i], i, Color.YELLOW);
-				wordMatchesList.add(false);
-				this.color_string = this.color_string + "y";
-
-			} else {
-				getActivePanel().setPanelText(userWordsArray[i], i, Color.GRAY);
-				wordMatchesList.add(false);
-				this.color_string = this.color_string + "b";
+			if (color_string_array[i].equals("g")) {
+//				System.out.println("filled green");
+				this.getActivePanel().setPanelText(userWordsArray[i], i, Color.GREEN);
+			} else if (color_string_array[i].equals("y")) {
+//				System.out.println("filled yellow");
+				this.getActivePanel().setPanelText(userWordsArray[i], i, Color.YELLOW);
+			} else if (color_string_array[i].equals("b")) {
+//				System.out.println("filled gray");
+				this.getActivePanel().setPanelText(userWordsArray[i], i, Color.GRAY);
 			}
 		}
-		// validation of greens and yellows
-		userWordsArray = userWord.split("");
-		String[] wordleStringarray = wordleString.split("");
-		String[] colorstringarray = color_string.split("");
-		for (int i = 0; i < userWordsArray.length; i++) {
-			// userWord, wordleString, color_string
-			//char = e ---> ref = userWordsArray[i]
-			int green_count = 0;
-			int yellow_count = 0;
-			int[] yellow_index = new int[userWordsArray.length];
-
-			if (count_check(userWord, userWordsArray[i]) > count_check(wordleString, userWordsArray[i]))
-				for (int j = 0; j < userWordsArray.length; j++) {
-					if (userWordsArray[i] == userWordsArray[j] && colorstringarray[j] == "g") green_count++;
-					else if (userWordsArray[i] == userWordsArray[j] && colorstringarray[j] == "y") yellow_count++;
-				}
-
-			if (green_count == count_check(wordleString, userWordsArray[i]) && yellow_count > 0) {
-				for (int j = 0; j < userWordsArray.length; j++) {
-					if (userWordsArray[i] == userWordsArray[j] && colorstringarray[j] == "y") colorstringarray[j] = "b";
-				}
-			}
-
-			StringBuffer sb = new StringBuffer();
-			for (int jj = 0; jj < colorstringarray.length; jj++) {
-				sb.append(colorstringarray[i]);
-			}
-			this.color_string = sb.toString();
-
-		}
-		String testColor = test(wordleString,userWord);
-		this.gameFrame.revalidate();
+//		for (int i = 0; i < userWord.length(); i++) // checking for each letter in the word inputted and then updating the color of the panel text for each letter
+//		{
+//			checked_chars = checked_chars + userWordsArray[i];
+////			System.out.println("count of " + userWordsArray[i] + " is " + count_check(userWord, userWordsArray[i]) );
+//			if (wordleWordsList.contains(userWordsArray[i]) && wordleWordsList.get(i).equals(userWordsArray[i])) {
+//				getActivePanel().setPanelText(userWordsArray[i], i, Color.GREEN);
+//				wordMatchesList.add(true);
+//				this.color_string = this.color_string + "g";
+//			} else if (wordleWordsList.contains(userWordsArray[i]) && count_check(wordleString, userWordsArray[i]) >= count_check(checked_chars, userWordsArray[i])) {
+//
+//				getActivePanel().setPanelText(userWordsArray[i], i, Color.YELLOW);
+//				wordMatchesList.add(false);
+//				this.color_string = this.color_string + "y";
+//
+//			} else {
+//				getActivePanel().setPanelText(userWordsArray[i], i, Color.GRAY);
+//				wordMatchesList.add(false);
+//				this.color_string = this.color_string + "b";
+//			}
+//		}
+		// not working --- validation of greens and yellows
+//		userWordsArray = userWord.split("");
+//		String[] wordleStringarray = wordleString.split("");
+//		String[] colorstringarray = color_string.split("");
+//		for (int i = 0; i < userWordsArray.length; i++) {
+//			// userWord, wordleString, color_string
+//			//char = e ---> ref = userWordsArray[i]
+//			int green_count = 0;
+//			int yellow_count = 0;
+//			int[] yellow_index = new int[userWordsArray.length];
+//
+//			if (count_check(userWord, userWordsArray[i]) > count_check(wordleString, userWordsArray[i]))
+//				for (int j = 0; j < userWordsArray.length; j++) {
+//					if (userWordsArray[i] == userWordsArray[j] && colorstringarray[j] == "g") green_count++;
+//					else if (userWordsArray[i] == userWordsArray[j] && colorstringarray[j] == "y") yellow_count++;
+//				}
+//
+//			if (green_count == count_check(wordleString, userWordsArray[i]) && yellow_count > 0) {
+//				for (int j = 0; j < userWordsArray.length; j++) {
+//					if (userWordsArray[i] == userWordsArray[j] && colorstringarray[j] == "y") colorstringarray[j] = "b";
+//				}
+//			}
+//
+//			StringBuffer sb = new StringBuffer();
+//			for (int jj = 0; jj < colorstringarray.length; jj++) {
+//				sb.append(colorstringarray[i]);
+//			}
+//			this.color_string = sb.toString();
+//
+//		}
+//		this.gameFrame.revalidate();
 		System.out.println(" ----> Color= " + this.color_string);
-		return !wordMatchesList.contains(false);
+		if (this.color_string == "ggggg") return true;
+		else return false;
 	}
 
-	public int correctGuess(String answer, String guess, char ch) {
+
+	public int expectedYellow(int[] checked, String answer, String guess, char ch) {
 		int count = 0;
 		for (int i = 0; i < answer.length(); i++) {
-			if (answer.charAt(i) == ch && guess.charAt(i) == ch)
+			if (answer.charAt(i) == ch && guess.charAt(i) != ch)
 				count++;
 		}
 		return count;
 	}
 
-	public String test(String answer, String guess)
-	{
-		String color = "";
-		for (int i = 0; i < guess.length(); i++) {
-				if (answer.charAt(i) == guess.charAt(i))
-					color += "g";
-				else if (count_check(answer, guess.charAt(i)) == 0)
-					color += "b";
-				else if ((count_check(answer, guess.charAt(i)) < count_check(guess, guess.charAt(i)))
-						&& count_check(guess, guess.charAt(i)) > correctGuess(answer, guess, guess.charAt(i)))
-					color += "b";
-				else
-					color += "y";
+	public int place(String guess, int index, char ch) {
+		int count = 0;
+		for (int i = 0; i <= index; i++) {
+//            if(checked[i]==1)
+//                continue;
+			if (ch == guess.charAt(i))
+				count++;
 		}
-		System.out.println(color);
-		System.out.println(color.length());
+		return count;
+	}
+
+	public String color_find(String wordle_string, String test_word) {
+		String color = "";
+		int wordSize = wordle_string.length();
+		int[] checked = new int[wordSize];
+		for (int i = 0; i < test_word.length(); i++) {
+			if (wordle_string.charAt(i) == test_word.charAt(i)) {
+				checked[i] = 1;
+				color += "g";
+			} else if (count_check(wordle_string, test_word.charAt(i)) == 0) {
+				checked[i] = 1;
+				color += "b";
+			} else {
+				int howMany = count_check(test_word, test_word.charAt(i));
+				int howManyExpected = expectedYellow(checked, wordle_string, test_word, test_word.charAt(i));
+				int place = place(test_word, i, test_word.charAt(i));
+				if (place <= howManyExpected) {
+					checked[i] = 1;
+					color += "y";
+				} else {
+					color += "b";
+				}
+			}
+
+//            else if ((count_check(answer, guess.charAt(i)) < count_check(guess, guess.charAt(i)))
+//                    && count_check(guess, guess.charAt(i)) > correctGuess(answer, guess, guess.charAt(i))) {
+//
+//                System.out.println("Index: "+i);
+//                System.out.println("1: "+count_check(answer, guess.charAt(i)));
+//                System.out.println("2 "+count_check(guess, guess.charAt(i)));
+//                System.out.println("3: "+correctGuess(answer, guess, guess.charAt(i)));
+//                color += "b";
+//            }
+//
+//            else
+//                color += "y";
+		}
+//		System.out.println(color);
+//		System.out.println(color.length());
 		return color;
 	}
+
+
+//	public String color_find(String wordle_string, String test_word) {
+//		String color = "";
+//		String checked_chars;
+//		for (int i = 0; i < test_word.length(); i++) {
+//			checked_chars = checked_chars + userWordsArray[i];
+//			if (wordle_string.charAt(i) == test_word.charAt(i))
+//				color += "g";
+//			else if (count_check(wordle_string, test_word.charAt(i)) == 0)
+//				color += "b";
+////			else if ((count_check(wordle_string, test_word.charAt(i)) < count_check(test_word, test_word.charAt(i)))
+////					&& count_check(test_word, test_word.charAt(i)) > correctGuess(wordle_string, test_word, test_word.charAt(i)))
+//			else if (correctGuess(wordle_string, test_word, test_word.charAt(i)) == count_check(wordle_string, test_word.charAt(i)) || count_check(wordleString, userWordsArray[i]) >= count_check(checked_chars, userWordsArray[i]) )
+//				color += "b";
+//			else
+//				color += "y";
+//		}
+//		System.out.println("checked for: " + wordle_string + " , teststring: " + test_word + " color :" + color);
+//		System.out.println(color.length());
+//		return color;
+//	}
 
 
 	// MITAL's function
