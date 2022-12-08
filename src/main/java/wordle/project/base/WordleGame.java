@@ -16,7 +16,6 @@ import javax.swing.*;
 import javax.swing.border.Border;
 
 
-
 //solver part
 import java.io.*;
 import java.util.Scanner;
@@ -26,7 +25,7 @@ public class WordleGame implements ActionListener {
 
 
 	private int auto_mode;
-	private String color_string;
+	public String color_string;
 	//	private static WordleGame w;
 	public int end = 0;
 
@@ -169,12 +168,12 @@ public class WordleGame implements ActionListener {
 
 	//----------------- code execution
 
-	private JFrame gameFrame;
-	private WordPanel[] wordPanelArray = new WordPanel[6];
-	private UserPanel userPanel;
-	private VariationPanel variationPanel;
-	private String wordleString;
-	private int chance_number = 0; //
+	public JFrame gameFrame;
+	public WordPanel[] wordPanelArray = new WordPanel[6];
+	public UserPanel userPanel;
+	public VariationPanel variationPanel;
+	public String wordleString;
+	public int chance_number = 0; //
 
 //	public WordleGame(boolean flag) {
 //		flag = true;
@@ -185,6 +184,7 @@ public class WordleGame implements ActionListener {
 		gameFrame = new JFrame("Wordle Game");
 		gameFrame.setSize(500, 500);
 		gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		int end = 0;
 
 		variationPanel = new VariationPanel();
 		variationPanel.getBtnStandard().addActionListener(this);
@@ -215,43 +215,89 @@ public class WordleGame implements ActionListener {
 		System.out.println("Word for the day : " + wordleString);
 	}
 
-	public static void main(String[] args) {
-//		while (true)
-		{
-			WordleGame w = new WordleGame();
-			w.setVariables();
-			w.setWordFrequencyList();
-//			new WordleGame(true).color_find("speed", "error");
-			boolean finished = false;
-			int trials = 0;
+	public int play(String answer) {
 
-			while (!finished && w.end == 0) {
-//				System.out.println("if" + w.end);
-				if (w.auto_mode == 1) {
-					try {
-						TimeUnit.MILLISECONDS.sleep(1);
-					} catch (Exception f) {
-					}
+		boolean finished = false;
+		int end = 0;
+		int play_times = 1;
 
-					w.gen_test_word();// generates the first word randomly and stores it in test_word for first check
+//		do {
+//			WordleGame w = new WordleGame();
+//			end = w.end;
+//			System.out.println("end is" + w.end);
+//		} while (end == 0);
+//		for (int i = 0; ; i++) {
+//			WordleGame w = new WordleGame();
+//			end = 0;
+//			while (end != 1) {
+////				w.setVariables();
+////				w.setWordFrequencyList();
+//				try {
+//					TimeUnit.MILLISECONDS.sleep(1);
+//				} catch (Exception f) {
+//				}
+//
+//				w.test_word = Bot.guess();// generates the first word randomly and stores it in test_word for first check
+//				System.out.println("COLOR o/p = " + w.check_word(w.test_word));// check the test_word and store the resulta	nt color in color_string
+//				try {
+//					w.findWord();// the color_string and test_string will be checked,all_words and the solution finder algo will try to find the best match word
+//				} catch (Exception g) {
+//					System.out.println("\n!!!! Exception occured in finding word=" + w.test_word + " \n" + g.toString());
+//					w.end = 1;
+//				}
+//				end = w.end;
+//			}
+////			String all_words = "";
+////			for (int jj = 0; jj < w.listOfWords.size(); jj++)
+////				all_words = all_words + w.listOfWords.get(jj).getWord() + "\n";
+////			w.write_to_file(all_words);
+//
+//		}
 
-//					w.auto_mode_sequence();
-					System.out.println("COLOR o/p = " + w.check_word(w.test_word));// check the test_word and store the resultant color in color_string
 
-					if (w.end == 0) {
-						try {
-							finished = w.findWord();// the color_string and test_string will be checked, and the solution finder algo will try to find the best match word
-						} catch (Exception g) {
-							System.out.println("\n!!!! Exception occured in finding word=" + w.test_word + " \n");
-						}
-					}
-					else {
-						w = new WordleGame();
-					}
-				}
+		for (int i = 0; i < 5; i++) {
 
+			String bestGuess;
+
+			if (i == 0)
+				bestGuess = "roate";
+			else if (Bot.possibleSolutions.size() == 1 || Bot.possibleSolutions.size() == 2)
+				bestGuess = Bot.possibleSolutions.get(0);
+			else
+				bestGuess = Bot.guess();
+
+			System.out.println(i + 1 + ": Guess: " + bestGuess);
+			//colorPattern
+			if (bestGuess.equals(answer)) {
+				System.out.println("Won!Answer is: " + bestGuess);
+				System.out.println("Number of turns taken: " + (i + 1));
+				return 1;
 			}
+			test_word = bestGuess;
+			Bot.possibleSolutions = Bot.getWordsThatFitPattern(bestGuess, check_word(test_word));
+			System.out.println("\n\n\n\n\nShortlisted words:");
+			for (String word : Bot.possibleSolutions) {
+				System.out.println(word);
+			}
+
+
 		}
+		System.out.println("Lost!Answer is: " + answer);
+		return 0;
+	}
+
+	public static void main(String[] args) {
+		while (true) {
+			Bot.init();
+			WordleGame w = new WordleGame();
+			w.play(Bot.choose());
+		}
+
+//		System.exit(0);
+
+
+	}
+
 
 //		while (true) {
 //			try {
@@ -268,17 +314,34 @@ public class WordleGame implements ActionListener {
 //			if (end == 1) System.exit(0);// end program
 //
 //		}
-		// testing the check word function
+	// testing the check word function
 
-
-	}
 
 	//------------------------------
 
 
+	public void write_to_file(String write_string) {
+		try {
+			FileWriter myWriter = new FileWriter("new_words.txt");
+//			BufferedWriter br = new BufferedWriter(myWriter);
+//			br.write(write_string + "\n");
+			myWriter.write(write_string + "\n");
+//			br.close();
+			myWriter.close();
+//				System.out.println("Successfully wrote to the file.");
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
+	}
+
+
 	//--- get a random word from the list during the start of the game
 	public String getWordleString() {
-		Path path = Paths.get(".//assets//Words.txt");
+		Path path = Paths.get(".//assets//valid_solutions.csv");
+//		Path path = Paths.get("..\\\\wordle.project\\\\assets\\\\Words.txt");// in windows
+		// for mac : Path path = Paths.get(".//assets//Words.txt");
+//		Path path = Paths.get(".//assets//Words.txt");
 		wordList = new ArrayList<>();
 		try {
 			wordList = Files.readAllLines(path);
@@ -299,11 +362,15 @@ public class WordleGame implements ActionListener {
 		if (userWord.length() == 5) {
 			System.out.println("Words Equal" + isWordleWordEqualTo(userWord.trim().toUpperCase()));
 			if (isWordleWordEqualTo(userWord.trim().toUpperCase())) {
-				JOptionPane.showMessageDialog(null, "You Win in " + (chance_number + 1) + "chances!!!", "Congrats", JOptionPane.INFORMATION_MESSAGE);
+//				JOptionPane.showMessageDialog(null, "You Win in " + (chance_number + 1) + "chances!!!", "Congrats", JOptionPane.INFORMATION_MESSAGE);
+				try {
+					TimeUnit.MILLISECONDS.sleep(500);
+				} catch (Exception f) {
+				}
 				clearAllPanels();
-				//System.out.println("\n>>>>>> Won in " + (chance_number + 1) + " chances !\n");
+				System.out.println("\n>>>>>> Won : " + (chance_number + 1) + " chances !\n");
 				gameFrame.dispose();
-//				end = 1;
+				end = 1;
 			}
 			chance_number++;
 		} else {
@@ -311,8 +378,8 @@ public class WordleGame implements ActionListener {
 		}
 
 		if (chance_number > 5) {
-			JOptionPane.showMessageDialog(null, "You Lost in " + (chance_number + 1) + " chances.Better luck next time.", "Oops",
-					JOptionPane.INFORMATION_MESSAGE);
+//			JOptionPane.showMessageDialog(null, "You Lost in " + (chance_number + 1) + " chances.Better luck next time.", "Oops",
+//					JOptionPane.INFORMATION_MESSAGE);
 
 			//System.out.println("\nXXXXXXX Lost in " + (chance_number + 1) + " chances !\n");
 			gameFrame.dispose();
@@ -321,6 +388,13 @@ public class WordleGame implements ActionListener {
 		return this.color_string;
 
 	}
+
+	public void auto_play() {
+//		WordleGame w = new WordleGame();
+
+
+	}
+
 
 	//--- action performed when the ok button is clicked
 	@Override
@@ -714,7 +788,7 @@ public class WordleGame implements ActionListener {
 	}
 
 	public void extract_word_list() {
-		Path path = Paths.get(".//assets//Words.txt");
+		Path path = Paths.get(".//assets//valid_solutions.csv");
 		wordList = new ArrayList<>();
 		try {
 			wordList = Files.readAllLines(path);
@@ -733,7 +807,8 @@ public class WordleGame implements ActionListener {
 		}
 	}
 
-	public boolean findWord() {
+	public boolean findWord() // the color_string and test_string will be checked, and the solution finder algo will try to find the best match word
+	{
 		Character[] result = {'b', 'b', 'b', 'b', 'b'};
 		Character[] test = {'g', 'g', 'g', 'g', 'g'};
 		ArrayList<String> removeList = new ArrayList<String>();
@@ -822,6 +897,7 @@ public class WordleGame implements ActionListener {
 		}
 
 		Random rand = new Random();
+		System.out.println("size of refined ans = " + refinedAnswers.size());
 		String finalWord = refinedAnswers.get(rand.nextInt(refinedAnswers.size()));
 		ArrayList<String> words = new ArrayList<String>();
 		ArrayList<Integer> wordFreq = new ArrayList<Integer>();
