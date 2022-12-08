@@ -21,7 +21,7 @@ import java.io.*;
 import java.util.Scanner;
 
 
-public class WordleGame implements ActionListener {
+public class WordleGame  {
 
 
 	private int auto_mode;
@@ -91,77 +91,77 @@ public class WordleGame implements ActionListener {
 		}
 	}
 
-	class UserPanel extends JPanel {
-
-		private JTextField userInput;
-		private JButton okButton;
-		private JRadioButton btn_auto;
-		private JRadioButton btn_manual;
-		private ButtonGroup mode = new ButtonGroup();
-
-		public UserPanel() {
-			this.setLayout(new GridLayout(3, 2));
-
-			btn_auto = new JRadioButton("Auto");
-			this.add(btn_auto);
-			btn_manual = new JRadioButton("Manual");
-			this.add(btn_manual);
-			this.mode.add(btn_auto);
-			this.mode.add(btn_manual);
-
-			userInput = new JTextField();
-			this.add(userInput);
-			okButton = new JButton("OK");
-			this.add(okButton);
-
-		}
-
-		public JTextField getUserInput() {
-			return userInput;
-		}
-
-		public JButton getOkButton() {
-			return okButton;
-		}
-
-		public JRadioButton getBtnAuto() {
-			return btn_auto;
-		}
-
-		public JRadioButton getBtnManual() {
-			return btn_manual;
-		}
-	}
-
-
-	class VariationPanel extends JPanel {
-
-		//Mital
-		private JRadioButton btn_standard;
-		private JRadioButton btn_variation;
-		private ButtonGroup btngrpvariation = new ButtonGroup();
+//	class UserPanel extends JPanel {
+//
+//		private JTextField userInput;
+//		private JButton okButton;
+//		private JRadioButton btn_auto;
+//		private JRadioButton btn_manual;
+//		private ButtonGroup mode = new ButtonGroup();
+//
+//		public UserPanel() {
+//			this.setLayout(new GridLayout(3, 2));
+//
+//			btn_auto = new JRadioButton("Auto");
+//			this.add(btn_auto);
+//			btn_manual = new JRadioButton("Manual");
+//			this.add(btn_manual);
+//			this.mode.add(btn_auto);
+//			this.mode.add(btn_manual);
+//
+//			userInput = new JTextField();
+//			this.add(userInput);
+//			okButton = new JButton("OK");
+//			this.add(okButton);
+//
+//		}
+//
+//		public JTextField getUserInput() {
+//			return userInput;
+//		}
+//
+//		public JButton getOkButton() {
+//			return okButton;
+//		}
+//
+//		public JRadioButton getBtnAuto() {
+//			return btn_auto;
+//		}
+//
+//		public JRadioButton getBtnManual() {
+//			return btn_manual;
+//		}
+//	}
 
 
-		public VariationPanel() {
-			this.setLayout(new GridLayout(1, 2));
-
-			btn_standard = new JRadioButton("Standard(5 Letters)");
-			this.add(btn_standard);
-			btn_variation = new JRadioButton("Variation(6 Letters)");
-			this.add(btn_variation);
-			this.btngrpvariation.add(btn_standard);
-			this.btngrpvariation.add(btn_variation);
-
-		}
-
-		public JRadioButton getBtnStandard() {
-			return btn_standard;
-		}
-
-		public JRadioButton getBtnvariation() {
-			return btn_variation;
-		}
-	}
+//	class VariationPanel extends JPanel {
+//
+//		//Mital
+//		private JRadioButton btn_standard;
+//		private JRadioButton btn_variation;
+//		private ButtonGroup btngrpvariation = new ButtonGroup();
+//
+//
+//		public VariationPanel() {
+//			this.setLayout(new GridLayout(1, 2));
+//
+//			btn_standard = new JRadioButton("Standard(5 Letters)");
+//			this.add(btn_standard);
+//			btn_variation = new JRadioButton("Variation(6 Letters)");
+//			this.add(btn_variation);
+//			this.btngrpvariation.add(btn_standard);
+//			this.btngrpvariation.add(btn_variation);
+//
+//		}
+//
+//		public JRadioButton getBtnStandard() {
+//			return btn_standard;
+//		}
+//
+//		public JRadioButton getBtnvariation() {
+//			return btn_variation;
+//		}
+//	}
 
 	//------------------------------
 
@@ -170,8 +170,8 @@ public class WordleGame implements ActionListener {
 
 	public JFrame gameFrame;
 	public WordPanel[] wordPanelArray = new WordPanel[6];
-	public UserPanel userPanel;
-	public VariationPanel variationPanel;
+//	public UserPanel userPanel;
+//	public VariationPanel variationPanel;
 	public String wordleString;
 	public int chance_number = 0; //
 
@@ -186,21 +186,21 @@ public class WordleGame implements ActionListener {
 		gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		int end = 0;
 
-		variationPanel = new VariationPanel();
-		variationPanel.getBtnStandard().addActionListener(this);
-		variationPanel.getBtnvariation().addActionListener(this);
-		gameFrame.add(variationPanel);
+//		variationPanel = new VariationPanel();
+//		variationPanel.getBtnStandard().addActionListener(this);
+//		variationPanel.getBtnvariation().addActionListener(this);
+//		gameFrame.add(variationPanel);
 
-		gameFrame.setLayout(new GridLayout(8, 1));
+		gameFrame.setLayout(new GridLayout(6, 1));
 		gameFrame.setVisible(true);
 		gameFrame.setLocationRelativeTo(null);
 
-		userPanel = new UserPanel();
-		userPanel.getOkButton().addActionListener(this);
-		userPanel.getBtnAuto().addActionListener(this);
-		userPanel.getBtnManual().addActionListener(this);
-		gameFrame.add(userPanel);
-		userPanel.setVisible(false);
+//		userPanel = new UserPanel();
+//		userPanel.getOkButton().addActionListener(this);
+//		userPanel.getBtnAuto().addActionListener(this);
+//		userPanel.getBtnManual().addActionListener(this);
+//		gameFrame.add(userPanel);
+//		userPanel.setVisible(false);
 
 		for (int i = 0; i < 6; i++) {
 			wordPanelArray[i] = new WordPanel();
@@ -397,50 +397,50 @@ public class WordleGame implements ActionListener {
 
 
 	//--- action performed when the ok button is clicked
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource().equals(userPanel.okButton)) {
-			String userWord = this.userPanel.getUserInput().getText();
-			System.out.println(check_word(userWord));
-//			if (userWord.length() > 4 && wordList.contains(userWord)) {
-//				if (isWordleWordEqualTo(userWord.trim().toUpperCase())) {
-//					JOptionPane.showMessageDialog(null, "You Win!!!", "Congrats", JOptionPane.INFORMATION_MESSAGE);
-//					clearAllPanels();
-//					System.out.println("\nWon in " + (chance_number + 1) + " chances !");
-//					gameFrame.dispose();
-//					return;
-//				}
+//	@Override
+//	public void actionPerformed(ActionEvent e) {
+//		if (e.getSource().equals(userPanel.okButton)) {
+//			String userWord = this.userPanel.getUserInput().getText();
+//			System.out.println(check_word(userWord));
+////			if (userWord.length() > 4 && wordList.contains(userWord)) {
+////				if (isWordleWordEqualTo(userWord.trim().toUpperCase())) {
+////					JOptionPane.showMessageDialog(null, "You Win!!!", "Congrats", JOptionPane.INFORMATION_MESSAGE);
+////					clearAllPanels();
+////					System.out.println("\nWon in " + (chance_number + 1) + " chances !");
+////					gameFrame.dispose();
+////					return;
+////				}
+////
+////				chance_number++;
+////				this.color_string = "";
+////			} else {
+////				System.out.println("!! Incorrect length of the word, must be 5 or incorrect word entered");
+////			}
+////
+////			if (chance_number > 5) {
+////				JOptionPane.showMessageDialog(null, "You Lost.Better luck next time.", "Oops",
+////						JOptionPane.INFORMATION_MESSAGE);
+////				gameFrame.dispose();
+////				return;
+////			}
+//		} else if (e.getSource().equals(userPanel.btn_auto)) {
+//			System.out.println("btn_auto pressed");
+//			auto_mode = 1;
 //
-//				chance_number++;
-//				this.color_string = "";
-//			} else {
-//				System.out.println("!! Incorrect length of the word, must be 5 or incorrect word entered");
-//			}
+//		} else if (e.getSource().equals(userPanel.btn_manual)) {
+//			System.out.println("btn_manual pressed: MANUAL mode active");
+//			auto_mode = 0;
+//		} else if (e.getSource().equals(variationPanel.btn_standard)) {
+//			System.out.println("btn_standard pressed");
+//			userPanel.setVisible(true);
 //
-//			if (chance_number > 5) {
-//				JOptionPane.showMessageDialog(null, "You Lost.Better luck next time.", "Oops",
-//						JOptionPane.INFORMATION_MESSAGE);
-//				gameFrame.dispose();
-//				return;
-//			}
-		} else if (e.getSource().equals(userPanel.btn_auto)) {
-			System.out.println("btn_auto pressed");
-			auto_mode = 1;
-
-		} else if (e.getSource().equals(userPanel.btn_manual)) {
-			System.out.println("btn_manual pressed: MANUAL mode active");
-			auto_mode = 0;
-		} else if (e.getSource().equals(variationPanel.btn_standard)) {
-			System.out.println("btn_standard pressed");
-			userPanel.setVisible(true);
-
-		} else if (e.getSource().equals(variationPanel.btn_variation)) {
-			System.out.println("btn_variation pressed: MANUAL mode active");
-			userPanel.setVisible(true);
-		}
-
-
-	}
+//		} else if (e.getSource().equals(variationPanel.btn_variation)) {
+//			System.out.println("btn_variation pressed: MANUAL mode active");
+//			userPanel.setVisible(true);
+//		}
+//
+//
+//	}
 
 	public void auto_mode_sequence() {
 		try {
